@@ -3,6 +3,8 @@ import { shortenUrl } from './api'
 import type { ShortenFailureKind } from './api'
 import { ShortenForm } from './components/ShortenForm'
 import { ResultPanel } from './components/ResultPanel'
+import { HistoryTable } from './components/HistoryTable'
+import { addToHistory, getHistory, removeFromHistory } from './lib/linkHistory'
 
 type ViewState =
   | { status: 'idle' }
@@ -12,15 +14,23 @@ type ViewState =
 
 function App() {
   const [state, setState] = useState<ViewState>({ status: 'idle' })
+  const [history, setHistory] = useState(() => getHistory())
 
   async function handleSubmit(normalizedUrl: string) {
     setState({ status: 'loading' })
     const result = await shortenUrl(normalizedUrl)
     if (result.ok) {
       setState({ status: 'success', shortUrl: result.shortUrl })
+      addToHistory({ code: result.code, longUrl: normalizedUrl, shortUrl: result.shortUrl })
+      setHistory(getHistory())
     } else {
       setState({ status: 'error', kind: result.kind })
     }
+  }
+
+  function handleRemove(code: string) {
+    removeFromHistory(code)
+    setHistory(getHistory())
   }
 
   return (
@@ -59,6 +69,8 @@ function App() {
         <p className="mt-6 text-center text-xs text-slate-400 dark:text-slate-600">
           No accounts, no tracking dashboards — just paste and go.
         </p>
+
+        <HistoryTable entries={history} onRemove={handleRemove} />
       </main>
     </div>
   )
