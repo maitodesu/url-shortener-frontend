@@ -80,7 +80,7 @@ function HistoryRow({
           target="_blank"
           rel="noopener noreferrer"
           onClick={() => touchHistory(entry.code)}
-          className="block truncate text-sm font-semibold text-indigo-600 hover:underline dark:text-indigo-400"
+          className="block break-all text-sm font-semibold text-indigo-600 hover:underline dark:text-indigo-400"
         >
           {entry.shortUrl}
         </a>
