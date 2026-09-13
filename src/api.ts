@@ -57,3 +57,27 @@ export async function shortenUrl(longUrl: string): Promise<ShortenResult> {
 
   return { ok: false, kind: 'server' }
 }
+
+export type LinkPreview = {
+  title?: string
+  description?: string
+  siteName?: string
+  image?: { url: string } | null
+  favicon?: { url: string } | null
+}
+
+/**
+ * Calls GET /{code}/preview. Returns null on any failure (missing preview,
+ * network error, bad response) rather than throwing -- this is a nice-to-have
+ * enhancement, so a failure here should never surface as an error to the user,
+ * just mean no preview card renders.
+ */
+export async function getPreview(code: string): Promise<LinkPreview | null> {
+  try {
+    const response = await fetch(`${API_BASE_URL}/${code}/preview`)
+    if (!response.ok) return null
+    return (await response.json()) as LinkPreview
+  } catch {
+    return null
+  }
+}

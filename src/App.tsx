@@ -9,7 +9,7 @@ import { addToHistory, getHistory, removeFromHistory } from './lib/linkHistory'
 type ViewState =
   | { status: 'idle' }
   | { status: 'loading' }
-  | { status: 'success'; shortUrl: string }
+  | { status: 'success'; shortUrl: string; code: string }
   | { status: 'error'; kind: ShortenFailureKind }
 
 function App() {
@@ -20,7 +20,7 @@ function App() {
     setState({ status: 'loading' })
     const result = await shortenUrl(normalizedUrl)
     if (result.ok) {
-      setState({ status: 'success', shortUrl: result.shortUrl })
+      setState({ status: 'success', shortUrl: result.shortUrl, code: result.code })
       addToHistory({ code: result.code, longUrl: normalizedUrl, shortUrl: result.shortUrl })
       setHistory(getHistory())
     } else {
@@ -58,7 +58,7 @@ function App() {
           {state.status !== 'idle' && state.status !== 'loading' && (
             <div className="mt-5">
               {state.status === 'success' ? (
-                <ResultPanel kind="success" shortUrl={state.shortUrl} />
+                <ResultPanel kind="success" shortUrl={state.shortUrl} code={state.code} />
               ) : (
                 <ResultPanel kind="error" errorKind={state.kind} />
               )}

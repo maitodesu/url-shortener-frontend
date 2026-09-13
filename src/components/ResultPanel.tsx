@@ -1,8 +1,9 @@
 import { useCopyToClipboard } from '../hooks/useCopyToClipboard'
+import { PreviewCard } from './PreviewCard'
 import type { ShortenFailureKind } from '../api'
 
 type ResultPanelProps =
-  | { kind: 'success'; shortUrl: string }
+  | { kind: 'success'; shortUrl: string; code: string }
   | { kind: 'error'; errorKind: ShortenFailureKind }
 
 const ERROR_COPY: Record<ShortenFailureKind, { title: string; detail: string }> = {
@@ -26,49 +27,52 @@ const ERROR_COPY: Record<ShortenFailureKind, { title: string; detail: string }> 
 
 export function ResultPanel(props: ResultPanelProps) {
   if (props.kind === 'success') {
-    return <SuccessPanel shortUrl={props.shortUrl} />
+    return <SuccessPanel shortUrl={props.shortUrl} code={props.code} />
   }
   return <ErrorPanel errorKind={props.errorKind} />
 }
 
-function SuccessPanel({ shortUrl }: { shortUrl: string }) {
+function SuccessPanel({ shortUrl, code }: { shortUrl: string; code: string }) {
   const { copied, copy } = useCopyToClipboard()
 
   return (
-    <div
-      role="status"
-      className="flex flex-col gap-3 rounded-xl border border-emerald-200 bg-emerald-50 p-4 dark:border-emerald-800/60 dark:bg-emerald-950/40 sm:flex-row sm:items-center sm:justify-between"
-    >
-      <div className="min-w-0">
-        <p className="text-sm font-medium text-emerald-700 dark:text-emerald-400">
-          Your short link is ready
-        </p>
-        <a
-          href={shortUrl}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="mt-0.5 block truncate text-lg font-semibold text-emerald-900 underline decoration-emerald-400 underline-offset-2 hover:text-emerald-700 dark:text-emerald-200 dark:decoration-emerald-600"
-        >
-          {shortUrl}
-        </a>
-      </div>
-      <button
-        type="button"
-        onClick={() => copy(shortUrl)}
-        className="inline-flex shrink-0 items-center justify-center gap-1.5 rounded-lg border border-emerald-300 bg-white px-4 py-2 text-sm font-semibold text-emerald-700 shadow-sm transition hover:bg-emerald-100 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-500 dark:border-emerald-700 dark:bg-emerald-900/40 dark:text-emerald-200 dark:hover:bg-emerald-900"
+    <div>
+      <div
+        role="status"
+        className="flex flex-col gap-3 rounded-xl border border-emerald-200 bg-emerald-50 p-4 dark:border-emerald-800/60 dark:bg-emerald-950/40 sm:flex-row sm:items-center sm:justify-between"
       >
-        {copied ? (
-          <>
-            <CheckIcon />
-            Copied
-          </>
-        ) : (
-          <>
-            <CopyIcon />
-            Copy
-          </>
-        )}
-      </button>
+        <div className="min-w-0">
+          <p className="text-sm font-medium text-emerald-700 dark:text-emerald-400">
+            Your short link is ready
+          </p>
+          <a
+            href={shortUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="mt-0.5 block truncate text-lg font-semibold text-emerald-900 underline decoration-emerald-400 underline-offset-2 hover:text-emerald-700 dark:text-emerald-200 dark:decoration-emerald-600"
+          >
+            {shortUrl}
+          </a>
+        </div>
+        <button
+          type="button"
+          onClick={() => copy(shortUrl)}
+          className="inline-flex shrink-0 items-center justify-center gap-1.5 rounded-lg border border-emerald-300 bg-white px-4 py-2 text-sm font-semibold text-emerald-700 shadow-sm transition hover:bg-emerald-100 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-500 dark:border-emerald-700 dark:bg-emerald-900/40 dark:text-emerald-200 dark:hover:bg-emerald-900"
+        >
+          {copied ? (
+            <>
+              <CheckIcon />
+              Copied
+            </>
+          ) : (
+            <>
+              <CopyIcon />
+              Copy
+            </>
+          )}
+        </button>
+      </div>
+      <PreviewCard code={code} />
     </div>
   )
 }
