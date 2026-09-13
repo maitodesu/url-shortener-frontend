@@ -35,7 +35,7 @@ export async function shortenUrl(longUrl: string): Promise<ShortenResult> {
     return { ok: false, kind: 'network' }
   }
 
-  if (response.status === 201) {
+  if (response.status === 201 || response.status === 200) {
     const data = (await response.json().catch(() => null)) as { code?: string } | null
     if (!data?.code) {
       return { ok: false, kind: 'server' }
