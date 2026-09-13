@@ -1,0 +1,33 @@
+{
+  "name": "url-shortener-frontend",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "author": "maitodesu",
+  "scripts": {
+    "dev": "vite",
+    "mock": "node mock/server.js",
+    "dev:mock": "concurrently -n vite,mock -c blue,magenta \"npm:dev\" \"npm:mock\"",
+    "build": "tsc -b && vite build",
+    "lint": "oxlint",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "react": "^19.2.8",
+    "react-dom": "^19.2.8"
+  },
+  "devDependencies": {
+    "@tailwindcss/vite": "^4.3.3",
+    "@types/node": "^24.13.3",
+    "@types/react": "^19.2.18",
+    "@types/react-dom": "^19.2.7",
+    "@vitejs/plugin-react": "^6.1.1",
+    "concurrently": "^10.0.5",
+    "cors": "^2.8.6",
+    "express": "^5.2.1",
+    "oxlint": "^1.81.0",
+    "tailwindcss": "^4.3.3",
+    "typescript": "~6.0.2",
+    "vite": "^8.3.0"
+  }
+}
