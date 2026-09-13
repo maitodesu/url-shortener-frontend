@@ -3,6 +3,7 @@ import Fuse from 'fuse.js'
 import { useCopyToClipboard } from '../hooks/useCopyToClipboard'
 import { touchHistory } from '../lib/linkHistory'
 import type { HistoryEntry } from '../lib/linkHistory'
+import { PreviewCard } from './PreviewCard'
 
 type HistoryTableProps = {
   entries: HistoryEntry[]
@@ -73,40 +74,43 @@ function HistoryRow({
   const { copied, copy } = useCopyToClipboard()
 
   return (
-    <li className="flex items-center justify-between gap-3 bg-white px-4 py-3 dark:bg-slate-900">
-      <div className="min-w-0 flex-1">
-        <a
-          href={entry.shortUrl}
-          target="_blank"
-          rel="noopener noreferrer"
-          onClick={() => touchHistory(entry.code)}
-          className="block break-all text-sm font-semibold text-indigo-600 hover:underline dark:text-indigo-400"
-        >
-          {entry.shortUrl}
-        </a>
-        <p className="truncate text-xs text-slate-500 dark:text-slate-400">{entry.longUrl}</p>
+    <li className="bg-white px-4 py-3 dark:bg-slate-900">
+      <div className="flex items-center justify-between gap-3">
+        <div className="min-w-0 flex-1">
+          <a
+            href={entry.shortUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            onClick={() => touchHistory(entry.code)}
+            className="block break-all text-sm font-semibold text-indigo-600 hover:underline dark:text-indigo-400"
+          >
+            {entry.shortUrl}
+          </a>
+          <p className="truncate text-xs text-slate-500 dark:text-slate-400">{entry.longUrl}</p>
+        </div>
+        <div className="flex shrink-0 items-center gap-1">
+          <button
+            type="button"
+            onClick={() => {
+              touchHistory(entry.code)
+              copy(entry.shortUrl)
+            }}
+            aria-label="Copy short link"
+            className="rounded-lg p-2 text-slate-500 transition hover:bg-slate-100 hover:text-slate-700 dark:text-slate-400 dark:hover:bg-slate-800 dark:hover:text-slate-200"
+          >
+            {copied ? <CheckIcon /> : <CopyIcon />}
+          </button>
+          <button
+            type="button"
+            onClick={() => onRemove(entry.code)}
+            aria-label="Remove from history"
+            className="rounded-lg p-2 text-slate-400 transition hover:bg-rose-50 hover:text-rose-600 dark:text-slate-500 dark:hover:bg-rose-950/40 dark:hover:text-rose-400"
+          >
+            <TrashIcon />
+          </button>
+        </div>
       </div>
-      <div className="flex shrink-0 items-center gap-1">
-        <button
-          type="button"
-          onClick={() => {
-            touchHistory(entry.code)
-            copy(entry.shortUrl)
-          }}
-          aria-label="Copy short link"
-          className="rounded-lg p-2 text-slate-500 transition hover:bg-slate-100 hover:text-slate-700 dark:text-slate-400 dark:hover:bg-slate-800 dark:hover:text-slate-200"
-        >
-          {copied ? <CheckIcon /> : <CopyIcon />}
-        </button>
-        <button
-          type="button"
-          onClick={() => onRemove(entry.code)}
-          aria-label="Remove from history"
-          className="rounded-lg p-2 text-slate-400 transition hover:bg-rose-50 hover:text-rose-600 dark:text-slate-500 dark:hover:bg-rose-950/40 dark:hover:text-rose-400"
-        >
-          <TrashIcon />
-        </button>
-      </div>
+      <PreviewCard code={entry.code} />
     </li>
   )
 }
