@@ -9,6 +9,11 @@ server {
     # proxy after terminating the public HTTPS connection. Funnel already
     # sets X-Forwarded-For to the real client IP, so it's safe to forward
     # as-is here -- nothing external can bypass it to inject a fake value.
+    #
+    # BACKEND_HOST is substituted at container startup (nginx's built-in
+    # envsubst-on-templates entrypoint) so the same image can point at
+    # different backend containers (e.g. prod vs. staging) via one env var
+    # instead of needing a separate build per target.
 
     location = / {
         try_files /index.html =404;
@@ -23,20 +28,20 @@ server {
     }
 
     location = /short {
-        proxy_pass http://url-shortener-backend:8080;
+        proxy_pass http://${BACKEND_HOST}:8080;
         proxy_set_header Host $host;
         proxy_set_header X-Forwarded-For $http_x_forwarded_for;
     }
 
     location = /ping {
-        proxy_pass http://url-shortener-backend:8080;
+        proxy_pass http://${BACKEND_HOST}:8080;
         proxy_set_header Host $host;
         proxy_set_header X-Forwarded-For $http_x_forwarded_for;
     }
 
     # Catch-all: short codes (GET /{code}) redirect via the backend.
     location / {
-        proxy_pass http://url-shortener-backend:8080;
+        proxy_pass http://${BACKEND_HOST}:8080;
         proxy_set_header Host $host;
         proxy_set_header X-Forwarded-For $http_x_forwarded_for;
     }
